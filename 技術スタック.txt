@@ -1,0 +1,75 @@
+1. 後端核心 (Backend Core) - 確定
+語言: Java (版本推測為 JDK 11 或 17)
+
+核心框架: Spring Boot (用於快速開發、內嵌伺服器、簡化配置)
+
+Web 框架: Spring MVC (用於構建 RESTful API)
+
+資料存取:
+
+Spring Data JPA / Hibernate: 處理標準的物件關係映射(ORM)和CRUD操作。
+
+MyBatis: 至關重要。用於高效、靈活地操作複雜SQL，並直接整合與呼叫現有的 Oracle PL/SQL 業務邏輯。
+
+2. 前端 (Frontend) - 高度可能
+架構: 前後端分離 (Front-Backend Separation)
+
+技術: 現代 JavaScript 框架，如 React 或 Vue.js，用於構建動態且高效的使用者界面。
+
+UI 框架: 基於元件庫的框架，如 Ant Design 或 Element UI，以加速開發。
+
+3. 資料庫 (Database) - 延續與整合
+資料庫: Oracle Database (預計會升級版本，如 19c/21c)
+
+關鍵整合: 新系統的 Java 層將透過 JDBC 和 MyBatis 深度整合並呼叫舊有的 PL/SQL 儲存過程，這是系統再構建成敗的關鍵。
+
+4. 部署與運維 (Deployment & Ops) - 現代化趨勢
+應用伺服器: 內嵌於 Spring Boot 的 Tomcat。
+
+容器化: 極高機率採用 Docker 進行容器化封裝，確保環境一致性。
+
+部署目標: 初期為 Linux 虛擬機器(VM)，後續有引入 Kubernetes (K8s) 的可能性。
+
+開發工具鏈:
+
+版本控制: Git (GitLab/GitHub)
+
+建置工具: Maven 或 Gradle
+
+CI/CD: 可能引入 Jenkins 或 GitLab CI 進行自動化部署。
+
+
+
+
+網址: https://start.spring.io/
+Project: Maven
+Language: Java
+Spring Boot: 3.x 或 2.7.x（兼容 JDK17）
+Dependencies:
+Spring Web (Spring MVC)
+Spring Data JPA
+MyBatis Framework
+
+
+確認oracle服務啟動:
+安裝時 默認用戶名SYSTEM 設置了密碼0
+
+Oracle XE 創建開發用戶
+用 SYS 登入 CDB$ROOT（SQL Developer / SQL*Plus）
+-- SYS 用戶以 SYSDBA 登入
+
+1.切換到 PDB（XEPDB1）
+ALTER SESSION SET CONTAINER = XEPDB1;
+SHOW CON_NAME;  -- 應該顯示 XEPDB1
+
+2.創建普通用戶並授權
+CONNECT → 允許用戶登錄資料庫
+RESOURCE → 允許用戶創建表、序列、索引等基本對象（開發用）
+
+CREATE USER testuser IDENTIFIED BY testpass;
+GRANT CONNECT, RESOURCE TO testuser;
+
+3.使用新用戶開發 / Spring Boot 連線
+JDBC URL：jdbc:oracle:thin:@localhost:1521/XEPDB1
+Username：testuser
+Password：testpass
