@@ -50,13 +50,14 @@ Spring Web (Spring MVC)
 Spring Data JPA
 MyBatis Framework
 
-
+https://www.oracle.com/ocom/groups/public/%40otn/documents/webcontent/229078_zhs.htm
 確認oracle服務啟動:
 安裝時 默認用戶名SYSTEM 設置了密碼0
 
 Oracle XE 創建開發用戶
 用 SYS 登入 CDB$ROOT（SQL Developer / SQL*Plus）
 -- SYS 用戶以 SYSDBA 登入
+sqlplus / as sysdba
 
 1.切換到 PDB（XEPDB1）
 ALTER SESSION SET CONTAINER = XEPDB1;
@@ -66,10 +67,18 @@ SHOW CON_NAME;  -- 應該顯示 XEPDB1
 CONNECT → 允許用戶登錄資料庫
 RESOURCE → 允許用戶創建表、序列、索引等基本對象（開發用）
 
-CREATE USER testuser IDENTIFIED BY testpass;
-GRANT CONNECT, RESOURCE TO testuser;
+ CREATE USER testuser IDENTIFIED BY 123456  DEFAULT TABLESPACE users TEMPORARY TABLESPACE temp QUOTA UNLIMITED ON users;
+ GRANT CREATE SESSION TO testuser;      -- 允許登入資料庫
+GRANT CREATE TABLE TO testuser;        -- 允許創建表
+GRANT CREATE VIEW TO testuser;         -- 允許創建視圖
+GRANT CREATE SEQUENCE TO testuser;     -- 允許創建序列
+GRANT CREATE PROCEDURE TO testuser;    -- 允許創建存儲過程
+
 
 3.使用新用戶開發 / Spring Boot 連線
 JDBC URL：jdbc:oracle:thin:@localhost:1521/XEPDB1
 Username：testuser
-Password：testpass
+123456
+
+sqlplus testuser/123456@localhost:1521/XEPDB1
+
