@@ -82,3 +82,50 @@ Username：testuser
 
 sqlplus testuser/123456@localhost:1521/XEPDB1
 
+
+
+
+
+步骤笔记 mac：
+
+1.数据库
+docker --version
+Docker version 28.4.0, build d8eb465
+
+# 拉取Oracle XE镜像
+docker pull gvenzl/oracle-xe:21-slim
+
+＃启动Oracle容器 设置密码
+docker run -d --name oracle-xe \
+  -e ORACLE_PASSWORD=000000 \
+  -p 1521:1521 \
+  gvenzl/oracle-xe:21-slim
+
+＃查容器状态
+docker ps
+CONTAINER ID   IMAGE                      COMMAND                  CREATED          STATUS          PORTS                                         NAMES
+7b6d01799893   gvenzl/oracle-xe:21-slim   "container-entrypoin…"   27 seconds ago   Up 26 seconds   0.0.0.0:1521->1521/tcp, [::]:1521->1521/tcp   oracle-xe
+
+＃看启动日志
+docker logs oracle-xe
+看到这些关键信息：
+DATABASE IS READY TO USE! ✅
+Database opened ✅
+ORACLE instance started ✅
+
+#连接到数据库
+docker exec -it oracle-xe sqlplus system/000000@XEPDB1
+
+
+#连接成功后，在SQL提示符下运行：
+-- 创建应用用户
+CREATE USER logistics_app IDENTIFIED BY 000000;
+
+-- 授权
+GRANT CONNECT, RESOURCE TO logistics_app;
+GRANT CREATE VIEW TO logistics_app;
+GRANT CREATE PROCEDURE TO logistics_app;
+GRANT CREATE SEQUENCE TO logistics_app;
+
+-- 退出
+EXIT;
