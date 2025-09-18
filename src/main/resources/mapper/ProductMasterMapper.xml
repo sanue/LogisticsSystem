@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistics.mapper.ProductMasterMapper">
+    
+    <!-- 结果映射 -->
+    <resultMap id="ProductMasterResultMap" type="com.logistics.entity.ProductMaster">
+        <id column="PRODUCT_ID" property="productId" jdbcType="VARCHAR"/>
+        <result column="PRODUCT_NAME" property="productName" jdbcType="VARCHAR"/>
+        <result column="SPECIFICATION" property="specification" jdbcType="VARCHAR"/>
+        <result column="UNIT" property="unit" jdbcType="VARCHAR"/>
+        <result column="SAFETY_STOCK" property="safetyStock" jdbcType="NUMERIC"/>
+        <result column="CREATED_AT" property="createdAt" jdbcType="TIMESTAMP"/>
+        <result column="UPDATED_AT" property="updatedAt" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <!-- 分页查询商品列表 -->
+    <select id="findWithPagination" resultMap="ProductMasterResultMap">
+        SELECT * FROM PRODUCT_MASTER 
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (PRODUCT_NAME LIKE '%' || #{keyword} || '%' OR PRODUCT_ID LIKE '%' || #{keyword} || '%')
+            </if>
+        </where>
+        ORDER BY 
+        <choose>
+            <when test="sortBy == 'productName'">PRODUCT_NAME</when>
+            <when test="sortBy == 'productId'">PRODUCT_ID</when>
+            <when test="sortBy == 'safetyStock'">SAFETY_STOCK</when>
+            <otherwise>CREATED_AT</otherwise>
+        </choose>
+        <choose>
+            <when test="sortDir == 'ASC'">ASC</when>
+            <otherwise>DESC</otherwise>
+        </choose>
+        OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY
+    </select>
+    
+    <!-- 统计商品总数 -->
+    <select id="countWithPagination" resultType="long">
+        SELECT COUNT(*) FROM PRODUCT_MASTER 
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (PRODUCT_NAME LIKE '%' || #{keyword} || '%' OR PRODUCT_ID LIKE '%' || #{keyword} || '%')
+            </if>
+        </where>
+    </select>
+    
+</mapper>

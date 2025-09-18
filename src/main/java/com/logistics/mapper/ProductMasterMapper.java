@@ -107,26 +107,6 @@ public interface ProductMasterMapper {
      * @return 商品列表
      * @return List of products
      */
-    @Select("<script>" +
-            "SELECT * FROM PRODUCT_MASTER " +
-            "<where>" +
-            "<if test='keyword != null and keyword != \"\"'>" +
-            "AND (PRODUCT_NAME LIKE '%' || #{keyword} || '%' OR PRODUCT_ID LIKE '%' || #{keyword} || '%')" +
-            "</if>" +
-            "</where>" +
-            "ORDER BY " +
-            "<choose>" +
-            "<when test='sortBy == \"productName\"'>PRODUCT_NAME</when>" +
-            "<when test='sortBy == \"productId\"'>PRODUCT_ID</when>" +
-            "<when test='sortBy == \"safetyStock\"'>SAFETY_STOCK</when>" +
-            "<otherwise>CREATED_AT</otherwise>" +
-            "</choose>" +
-            "<choose>" +
-            "<when test='sortDir == \"ASC\"'>ASC</when>" +
-            "<otherwise>DESC</otherwise>" +
-            "</choose>" +
-            " OFFSET #{page} * #{size} ROWS FETCH NEXT #{size} ROWS ONLY" +
-            "</script>")
     List<ProductMaster> findWithPagination(PageRequest pageRequest);
     
     /**
@@ -137,13 +117,5 @@ public interface ProductMasterMapper {
      * @return 总数
      * @return Total count
      */
-    @Select("<script>" +
-            "SELECT COUNT(*) FROM PRODUCT_MASTER " +
-            "<where>" +
-            "<if test='keyword != null and keyword != \"\"'>" +
-            "AND (PRODUCT_NAME LIKE '%' || #{keyword} || '%' OR PRODUCT_ID LIKE '%' || #{keyword} || '%')" +
-            "</if>" +
-            "</where>" +
-            "</script>")
     long countWithPagination(PageRequest pageRequest);
 }
