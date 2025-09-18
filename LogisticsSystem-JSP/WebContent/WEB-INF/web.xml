@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+         http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+    
+    <display-name>Logistics System</display-name>
+    
+    <!-- Jersey REST API配置 -->
+    <servlet>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>com.sun.jersey.config.property.packages</param-name>
+            <param-value>com.logistics.api</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>Jersey REST Service</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+    
+    <!-- Servlet配置 -->
+    <servlet>
+        <servlet-name>ProductServlet</servlet-name>
+        <servlet-class>com.logistics.servlet.ProductServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>CustomerServlet</servlet-name>
+        <servlet-class>com.logistics.servlet.CustomerServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>LocationServlet</servlet-name>
+        <servlet-class>com.logistics.servlet.LocationServlet</servlet-class>
+    </servlet>
+    
+    <servlet>
+        <servlet-name>DashboardServlet</servlet-name>
+        <servlet-class>com.logistics.servlet.DashboardServlet</servlet-class>
+    </servlet>
+    
+    <!-- Servlet映射 -->
+    <servlet-mapping>
+        <servlet-name>ProductServlet</servlet-name>
+        <url-pattern>/product</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>CustomerServlet</servlet-name>
+        <url-pattern>/customer</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>LocationServlet</servlet-name>
+        <url-pattern>/location</url-pattern>
+    </servlet-mapping>
+    
+    <servlet-mapping>
+        <servlet-name>DashboardServlet</servlet-name>
+        <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+    
+    <!-- 欢迎页面 -->
+    <welcome-file-list>
+        <welcome-file>dashboard</welcome-file>
+    </welcome-file-list>
+    
+    <!-- 字符编码过滤器 -->
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>com.logistics.filter.CharacterEncodingFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+</web-app>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="LogisticsSystem-JSP" default="build" basedir=".">
+    
+    <!-- 项目属性 -->
+    <property name="src.dir" value="src"/>
+    <property name="web.dir" value="WebContent"/>
+    <property name="build.dir" value="build"/>
+    <property name="classes.dir" value="${build.dir}/classes"/>
+    <property name="war.dir" value="${build.dir}/war"/>
+    <property name="lib.dir" value="${web.dir}/WEB-INF/lib"/>
+    
+    <!-- 编译路径 -->
+    <path id="compile.classpath">
+        <fileset dir="${lib.dir}">
+            <include name="*.jar"/>
+        </fileset>
+    </path>
+    
+    <!-- 清理任务 -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <echo message="清理完成"/>
+    </target>
+    
+    <!-- 初始化任务 -->
+    <target name="init" depends="clean">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${classes.dir}"/>
+        <mkdir dir="${war.dir}"/>
+        <echo message="初始化完成"/>
+    </target>
+    
+    <!-- 编译任务 -->
+    <target name="compile" depends="init">
+        <javac srcdir="${src.dir}" 
+               destdir="${classes.dir}" 
+               classpathref="compile.classpath"
+               encoding="UTF-8"
+               debug="true"
+               includeantruntime="false">
+            <compilerarg value="-Xlint:unchecked"/>
+        </javac>
+        <echo message="编译完成"/>
+    </target>
+    
+    <!-- 复制Web资源 -->
+    <target name="copy-web" depends="compile">
+        <copy todir="${war.dir}">
+            <fileset dir="${web.dir}">
+                <exclude name="WEB-INF/classes/**"/>
+            </fileset>
+        </copy>
+        <copy todir="${war.dir}/WEB-INF/classes">
+            <fileset dir="${classes.dir}"/>
+        </copy>
+        <echo message="Web资源复制完成"/>
+    </target>
+    
+    <!-- 构建WAR文件 -->
+    <target name="war" depends="copy-web">
+        <war destfile="${build.dir}/LogisticsSystem.war" 
+             webxml="${war.dir}/WEB-INF/web.xml">
+            <fileset dir="${war.dir}"/>
+        </war>
+        <echo message="WAR文件构建完成: ${build.dir}/LogisticsSystem.war"/>
+    </target>
+    
+    <!-- 构建任务 -->
+    <target name="build" depends="war">
+        <echo message="项目构建完成"/>
+    </target>
+    
+    <!-- 部署到Tomcat -->
+    <target name="deploy" depends="build">
+        <property name="tomcat.home" value="${env.CATALINA_HOME}"/>
+        <property name="tomcat.webapps" value="${tomcat.home}/webapps"/>
+        
+        <copy file="${build.dir}/LogisticsSystem.war" 
+              todir="${tomcat.webapps}"/>
+        <echo message="WAR文件已部署到Tomcat: ${tomcat.webapps}/LogisticsSystem.war"/>
+    </target>
+    
+    <!-- 运行项目（需要Tomcat） -->
+    <target name="run" depends="deploy">
+        <echo message="项目已部署，请启动Tomcat服务器"/>
+        <echo message="访问地址: http://localhost:8080/LogisticsSystem"/>
+    </target>
+    
+</project>

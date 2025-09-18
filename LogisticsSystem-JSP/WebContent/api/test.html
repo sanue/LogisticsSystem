@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>REST API 测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .api-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .api-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .api-section h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+        .endpoint {
+            background: #f8f9fa;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .method {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            color: white;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .get { background: #28a745; }
+        .post { background: #007bff; }
+        .put { background: #ffc107; color: #333; }
+        .delete { background: #dc3545; }
+        .description {
+            margin: 10px 0;
+            color: #666;
+        }
+        .example {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .test-button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>物流管理システム REST API 测试</h1>
+        
+        <!-- 商品API -->
+        <div class="api-section">
+            <h2>商品管理 API</h2>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>/api/products</strong>
+            </div>
+            <div class="description">获取商品列表（支持分页和搜索）</div>
+            <div class="example">参数：
+- page: 页码（默认0）
+- size: 每页大小（默认10）
+- sortBy: 排序字段（默认CREATED_AT）
+- sortDir: 排序方向（默认DESC）
+- keyword: 搜索关键词
+
+示例：/api/products?page=0&size=5&keyword=商品</div>
+            <button class="test-button" onclick="testGetProducts()">测试获取商品列表</button>
+            <div id="products-result" class="result" style="display:none;"></div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>/api/products/{id}</strong>
+            </div>
+            <div class="description">根据ID获取商品详情</div>
+            <button class="test-button" onclick="testGetProductById()">测试获取商品详情</button>
+            <div id="product-detail-result" class="result" style="display:none;"></div>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <strong>/api/products</strong>
+            </div>
+            <div class="description">创建新商品</div>
+            <div class="example">请求体：
+{
+  "productId": "P001",
+  "productName": "测试商品",
+  "specification": "规格说明",
+  "unit": "个",
+  "safetyStock": 100
+}</div>
+            <button class="test-button" onclick="testCreateProduct()">测试创建商品</button>
+            <div id="create-product-result" class="result" style="display:none;"></div>
+            
+            <div class="endpoint">
+                <span class="method put">PUT</span>
+                <strong>/api/products/{id}</strong>
+            </div>
+            <div class="description">更新商品信息</div>
+            <button class="test-button" onclick="testUpdateProduct()">测试更新商品</button>
+            <div id="update-product-result" class="result" style="display:none;"></div>
+            
+            <div class="endpoint">
+                <span class="method delete">DELETE</span>
+                <strong>/api/products/{id}</strong>
+            </div>
+            <div class="description">删除商品</div>
+            <button class="test-button" onclick="testDeleteProduct()">测试删除商品</button>
+            <div id="delete-product-result" class="result" style="display:none;"></div>
+        </div>
+        
+        <!-- 客户API -->
+        <div class="api-section">
+            <h2>客户管理 API</h2>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>/api/customers</strong>
+            </div>
+            <div class="description">获取客户列表（支持分页和搜索）</div>
+            <button class="test-button" onclick="testGetCustomers()">测试获取客户列表</button>
+            <div id="customers-result" class="result" style="display:none;"></div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>/api/customers/{id}</strong>
+            </div>
+            <div class="description">根据ID获取客户详情</div>
+            <button class="test-button" onclick="testGetCustomerById()">测试获取客户详情</button>
+            <div id="customer-detail-result" class="result" style="display:none;"></div>
+        </div>
+        
+        <!-- 库位API -->
+        <div class="api-section">
+            <h2>库位管理 API</h2>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>/api/locations</strong>
+            </div>
+            <div class="description">获取库位列表（支持分页和搜索）</div>
+            <button class="test-button" onclick="testGetLocations()">测试获取库位列表</button>
+            <div id="locations-result" class="result" style="display:none;"></div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <strong>/api/locations/{id}</strong>
+            </div>
+            <div class="description">根据ID获取库位详情</div>
+            <button class="test-button" onclick="testGetLocationById()">测试获取库位详情</button>
+            <div id="location-detail-result" class="result" style="display:none;"></div>
+        </div>
+    </div>
+
+    <script>
+        const baseUrl = window.location.origin + window.location.pathname.replace('/api/test.html', '');
+        
+        async function makeRequest(url, method = 'GET', body = null) {
+            try {
+                const options = {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                };
+                
+                if (body) {
+                    options.body = JSON.stringify(body);
+                }
+                
+                const response = await fetch(url, options);
+                const data = await response.text();
+                return {
+                    status: response.status,
+                    data: data
+                };
+            } catch (error) {
+                return {
+                    status: 'ERROR',
+                    data: error.message
+                };
+            }
+        }
+        
+        function showResult(elementId, result) {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.textContent = `状态码: ${result.status}\n\n响应数据:\n${result.data}`;
+        }
+        
+        // 商品API测试
+        async function testGetProducts() {
+            const result = await makeRequest(`${baseUrl}/api/products?page=0&size=5`);
+            showResult('products-result', result);
+        }
+        
+        async function testGetProductById() {
+            const result = await makeRequest(`${baseUrl}/api/products/P001`);
+            showResult('product-detail-result', result);
+        }
+        
+        async function testCreateProduct() {
+            const product = {
+                productId: "P" + Date.now(),
+                productName: "测试商品" + Date.now(),
+                specification: "测试规格",
+                unit: "个",
+                safetyStock: 100
+            };
+            const result = await makeRequest(`${baseUrl}/api/products`, 'POST', product);
+            showResult('create-product-result', result);
+        }
+        
+        async function testUpdateProduct() {
+            const product = {
+                productId: "P001",
+                productName: "更新后的商品名称",
+                specification: "更新后的规格",
+                unit: "个",
+                safetyStock: 150
+            };
+            const result = await makeRequest(`${baseUrl}/api/products/P001`, 'PUT', product);
+            showResult('update-product-result', result);
+        }
+        
+        async function testDeleteProduct() {
+            const result = await makeRequest(`${baseUrl}/api/products/P001`, 'DELETE');
+            showResult('delete-product-result', result);
+        }
+        
+        // 客户API测试
+        async function testGetCustomers() {
+            const result = await makeRequest(`${baseUrl}/api/customers?page=0&size=5`);
+            showResult('customers-result', result);
+        }
+        
+        async function testGetCustomerById() {
+            const result = await makeRequest(`${baseUrl}/api/customers/C001`);
+            showResult('customer-detail-result', result);
+        }
+        
+        // 库位API测试
+        async function testGetLocations() {
+            const result = await makeRequest(`${baseUrl}/api/locations?page=0&size=5`);
+            showResult('locations-result', result);
+        }
+        
+        async function testGetLocationById() {
+            const result = await makeRequest(`${baseUrl}/api/locations/L001`);
+            showResult('location-detail-result', result);
+        }
+    </script>
+</body>
+</html>
